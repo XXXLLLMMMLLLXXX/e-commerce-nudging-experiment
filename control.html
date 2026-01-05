@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Protein Bars Shop (Control)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="brand">FitBar Store</div>
+    <div class="meta">Proteinriegel • Demo-Shop</div>
+  </header>
+
+  <main class="layout">
+    <section class="products">
+      <h1>Wählen Sie Proteinriegel</h1>
+      <p class="subtitle">Bitte stellen Sie Ihre Einkaufskorb-Zusammenstellung zusammen.</p>
+
+      <div id="productList" class="grid"></div>
+
+      <div class="actions">
+        <button id="goSurveyBtn" class="primary" disabled>
+          Weiter zur Umfrage
+        </button>
+        <div class="hint" id="hintText">Fügen Sie mindestens 1 Artikel in den Warenkorb hinzu.</div>
+      </div>
+    </section>
+
+    <aside class="cart">
+      <h2>Warenkorb</h2>
+      <div id="cartItems" class="cart-items"></div>
+      <div class="cart-footer">
+        <div class="row">
+          <span>Artikel gesamt:</span>
+          <strong id="cartCount">0</strong>
+        </div>
+        <div class="row">
+          <span>Zwischensumme:</span>
+          <strong id="cartTotal">0,00 €</strong>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // условие/вариант: 1=control, 2=socialproof, 3=scarcity, 4=both
+    window.EXPERIMENT_CONDITION = 1;
+  </script>
+  <script src="./app.js"></script>
+</body>
+</html>
