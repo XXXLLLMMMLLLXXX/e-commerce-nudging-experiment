@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Nudging Experiment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 26px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .intro-text {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .intro-text strong {
+            color: #667eea;
+        }
+
+        .highlight-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+        }
+
+        .highlight-box p {
+            margin-bottom: 10px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .intro-text {
+                font-size: 15px;
+            }
+
+            .start-button {
+                padding: 15px 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>E-Commerce Nudging Experiment</h1>
+        
+        <p class="intro-text">
+            Diese Studie untersucht Entscheidungsprozesse in einem simulierten Online-Shop. 
+            Die Teilnahme dauert etwa <strong>5–7 Minuten</strong>. Alle Antworten werden anonym 
+            erhoben und ausschließlich zu wissenschaftlichen Zwecken verwendet.
+        </p>
+
+        <div class="highlight-box">
+            <p><strong>Willkommen und vielen Dank für Ihre Teilnahme!</strong></p>
+            <p>
+                In dieser Studie werden Sie gebeten, eine kurze Aufgabe in einem simulierten 
+                Online-Shop zu bearbeiten und anschließend einige Fragen zu beantworten.
+            </p>
+            <p>
+                Es gibt keine richtigen oder falschen Antworten. Bitte beantworten Sie alle 
+                Fragen spontan und ehrlich.
+            </p>
+            <p>
+                Die Teilnahme ist freiwillig und anonym. Sie können die Studie jederzeit abbrechen.
+            </p>
+        </div>
+
+        <button class="start-button" onclick="startExperiment()">Test starten</button>
+
+        <p class="footer-note">
+            Klicken Sie auf „Test starten", um mit dem Experiment zu beginnen.
+        </p>
+    </div>
+
+    <script>
+        function startExperiment() {
+            // ====== ССЫЛКИ НА ВАШИ 4 СТРАНИЦЫ ======
+            const experimentPages = [
+                {
+                    url: 'https://xxxlllmmmlllxxx.github.io/e-commerce-nudging-experiment/control.html',
+                    group: 'control',
+                    groupId: 1
+                },
+                {
+                    url: 'https://xxxlllmmmlllxxx.github.io/e-commerce-nudging-experiment/socialproof.html',
+                    group: 'socialproof',
+                    groupId: 2
+                },
+                {
+                    url: 'https://xxxlllmmmlllxxx.github.io/e-commerce-nudging-experiment/scarcity.html',
+                    group: 'scarcity',
+                    groupId: 3
+                },
+                {
+                    url: 'https://xxxlllmmmlllxxx.github.io/e-commerce-nudging-experiment/both.html',
+                    group: 'both',
+                    groupId: 4
+                }
+            ];
+
+            // ====== СЛУЧАЙНЫЙ ВЫБОР СТРАНИЦЫ ======
+            const randomIndex = Math.floor(Math.random() * experimentPages.length);
+            const selectedPage = experimentPages[randomIndex];
+
+            // ====== URL ДЛЯ ВОЗВРАТА В LIMESURVEY ======
+            const returnURL = 'https://umfrage.uni-jena.de/?r=survey/index&sid=715345&lang=de';
+
+            // ====== ФОРМИРУЕМ URL С ПАРАМЕТРАМИ ======
+            const experimentURL = `${selectedPage.url}?group=${selectedPage.group}&groupId=${selectedPage.groupId}&returnURL=${encodeURIComponent(returnURL)}`;
+
+            // ====== ОТЛАДКА (видно в консоли F12) ======
+            console.log('Selected group:', selectedPage.group);
+            console.log('Group ID:', selectedPage.groupId);
+            console.log('Redirecting to:', experimentURL);
+
+            // ====== ПЕРЕХОД НА ВЫБРАННУЮ СТРАНИЦУ ======
+            window.location.href = experimentURL;
+        }
+    </script>
+</body>
+</html>
