@@ -263,7 +263,7 @@ function renderProducts() {
 
     const note = document.createElement("div");
     note.className = "small-note";
-    note.textContent = "Nutzen Sie +/–, um die Menge auszuwählen, dann „In den Warenkorb“.";
+    note.textContent = "Nutzen Sie +/–, um die Menge auszuwählen, dann „In den Warenkorb";
 
     // Сборка карточки
     card.appendChild(img);
@@ -428,11 +428,13 @@ function updateGoSurveyState() {
     : "Fügen Sie mindestens 1 Artikel in den Warenkorb hinzu.";
 }
 
+// ====== НОВАЯ ФУНКЦИЯ: Возврат в LimeSurvey с данными ======
 function handleGoSurvey() {
   const endTs = Date.now();
   const timeOnSiteMs = endTs - state.startTs;
   logEvent("go_to_survey_click", { timeOnSiteMs });
 
+  // Собираем все данные эксперимента
   const payload = {
     condition: state.condition,
     startTs: state.startTs,
@@ -442,10 +444,62 @@ function handleGoSurvey() {
     events: state.events,
   };
 
+  // Выводим в консоль для отладки
   console.log("EXPERIMENT_PAYLOAD", payload);
 
-  // позже заменим на реальный переход/передачу в LimeSurvey
-  alert("Demo: Daten wurden in der Konsole gespeichert (F12 → Console).");
+  // ====== ПОДГОТОВКА ДАННЫХ ДЛЯ ПЕРЕДАЧИ В LIMESURVEY ======
+
+  // 1. Группа эксперимента
+  const groupNames = {
+    1: 'control',
+    2: 'socialproof',
+    3: 'scarcity',
+    4: 'both'
+  };
+  const groupName = groupNames[state.condition] || 'unknown';
+
+  // 2. Время на сайте (в секундах)
+  const timeOnSiteSec = Math.round(timeOnSiteMs / 1000);
+
+  // 3. Формируем строку с товарами в корзине: "p1:2,p3:1,p5:3"
+  const cartProductsArray = [];
+  for (const [pid, qty] of Object.entries(state.cart)) {
+    if (qty > 0) {
+      cartProductsArray.push(`${pid}:${qty}`);
+    }
+  }
+  const cartProductsString = cartProductsArray.join(',') || 'empty';
+
+  // 4. Общая сумма корзины (в евро, с точкой)
+  const { total } = cartTotals();
+  const cartTotalValue = total.toFixed(2);
+
+  // 5. Получаем URL LimeSurvey
+  const urlParams = new URLSearchParams(window.location.search);
+  let returnURL = urlParams.get('returnURL');
+  
+  // Если URL не передан из randomizer, используем стандартный
+  if (!returnURL) {
+    returnURL = 'https://umfrage.uni-jena.de/?r=survey/index&sid=715345&lang=de';
+  }
+
+  // 6. Формируем финальный URL с параметрами
+  const separator = returnURL.includes('?') ? '&' : '?';
+  const finalURL = `${returnURL}${separator}experimentGroup=${groupName}&experimentGroupId=${state.condition}&timeOnSite=${timeOnSiteSec}&cartProducts=${encodeURIComponent(cartProductsString)}&cartTotal=${cartTotalValue}`;
+
+  // Выводим для отладки
+  console.log('=== ДАННЫЕ ДЛЯ LIMESURVEY ===');
+  console.log('Группа:', groupName, '(ID:', state.condition + ')');
+  console.log('Время на сайте:', timeOnSiteSec, 'секунд');
+  console.log('Товары в корзине:', cartProductsString);
+  console.log('Общая сумма:', cartTotalValue, '€');
+  console.log('Переход на:', finalURL);
+
+  // 7. Сохраняем данные в sessionStorage (на случай если нужно будет проверить)
+  sessionStorage.setItem('experimentData', JSON.stringify(payload));
+
+  // 8. Переходим в LimeSurvey
+  window.location.href = finalURL;
 }
 
 // ====== INIT ======
@@ -462,6 +516,7 @@ window.addEventListener("load", () => {
 window.addEventListener("beforeunload", () => {
   logEvent("page_unload", { timeOnSiteMs: Date.now() - state.startTs });
 });
+
 
 
 
